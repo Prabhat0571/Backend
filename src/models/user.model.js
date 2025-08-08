@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { use } from "react";
 const userSchema = mongoose.Schema(
     {
       username: {
@@ -34,7 +33,7 @@ const userSchema = mongoose.Schema(
         },
         watchHistory: [
             {
-                type: Schema.Types.ObjectId,
+                type:mongoose.Schema.Types.ObjectId,
                 ref: "Video"
             }
         ],
@@ -53,7 +52,7 @@ const userSchema = mongoose.Schema(
 userSchema.pre("save", async function(next){
     if(!this.isModified("password")) return next(); //agr password m kch change hi nahi hua h toh kch change mt karo bs next krado
 
-    this.password= bcrypt.hash(this.password,10) // change hua h toh kardo
+    this.password= await bcrypt.hash(this.password,10) // change hua h toh kardo
     //ye jo 10 itni baar round lgega for hashing
     next() //flag aage badha do
 }) //jo bhi code execute karana h yaha likhdo only before a specific condition "save", "validation" etc
@@ -71,7 +70,7 @@ userSchema.methods.generateAccessToken= function (){
         _id: this._id,
         email: this.email,
         username: this.username,
-        fullname: this.fullName //this.fullName comes fromd database
+        fullname: this.fullName //this.fullName come fromd database
     },
           
     process.env.ACCESS_TOKEN_SECRET,
@@ -92,9 +91,11 @@ userSchema.methods.generateRefreshToken= function (){
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY //object k andr likhte hai
 
     }
+
+
+
+
 )
 }
-
-
 
 export const User= mongoose.model("User", userSchema)

@@ -8,7 +8,7 @@ dotenv.config({
 dbConnect() //this returns a promise and we can use .then() and .catch() to handle the connection
 .then(()=>{
    app.listen(process.env.PORT || 8000 , ()=>{
-    `server is running at : ${process.env.PORT}`
+    console.log(`server is running at PORT : ${process.env.PORT}`)
    })
    app.on("error" , (err)=>{
            console.log("error logged" , err)
