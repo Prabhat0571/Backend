@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema(
             type: String,
             required: true,
             unique: true,
-            lowecase: true,
+            lowercase: true,
             trim: true, 
         },
         fullName: {
@@ -57,7 +57,7 @@ userSchema.pre("save", async function(next){
     next() //flag aage badha do
 }) //jo bhi code execute karana h yaha likhdo only before a specific condition "save", "validation" etc
 
-//password kese compare kiya jaye kyuki jo database m store h wo toh encrypted hai and user jo de rha hai wo hai 12345 mtlb basic ek string hai
+//password kese compare kiya jaye kyuki jo database m store h wo toh encrypte0d hai and user jo de rha hai wo hai 12345 mtlb basic ek string hai
 //ye kaam bhi bcrypt kardeta hai /
 
 userSchema.methods.isPasswordCorrect = async function(password){
@@ -65,7 +65,7 @@ userSchema.methods.isPasswordCorrect = async function(password){
     //await isliye use kiya kyuki ye expensive operation hai and time lega toh isliye async await use kiya
 }
 
-userSchema.methods.generateAccessToken= function (){
+userSchema.methods.generateAccessToken= function (){  //isko short lived rakhte hai as jaha pe auth ki requirement hai waha pe utna der k liye access milta hai bs
    return jwt.sign ({
         _id: this._id,
         email: this.email,
@@ -75,26 +75,22 @@ userSchema.methods.generateAccessToken= function (){
           
     process.env.ACCESS_TOKEN_SECRET,
     {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY //object k andr likhte hai
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRY 
 
     }
 )
 }
 
-userSchema.methods.generateRefreshToken= function (){
+userSchema.methods.generateRefreshToken= function (){   //isko long lived rakhte h as ye user ko bhi dete h or database ko bhi agr user ko firse login krna h toh wo endpoint hit krke dobara login krlega
    return jwt.sign ({
         _id: this._id,
     },
           
     process.env.REFRESH_TOKEN_SECRET,
     {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY //object k andr likhte hai
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRY 
 
-    }
-
-
-
-
+    } 
 )
 }
 
